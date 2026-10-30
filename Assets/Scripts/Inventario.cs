@@ -26,7 +26,7 @@ public class Inventario : MonoBehaviour
     void Objetos(int indice, string objeto)
     {
         hotbar[indice] = objeto;
-        Debug.Log("Objeto +mas: " + objeto);
+        Debug.Log("Objeto + mas: " + objeto);
     }
 
     void DescribirObjeto(int indice)
@@ -37,7 +37,7 @@ public class Inventario : MonoBehaviour
     void DesechadoObjeto(int indice)
     {
         hotbar[indice] = null;
-        Debug.Log("espacio " + indice + " vaciado");
+        Debug.Log("espacio " + indice + " vacio");
     }
 
     void DescribirInventario()
@@ -49,7 +49,7 @@ public class Inventario : MonoBehaviour
             if (hotbar[i] != null)
                 Debug.Log("espacio " + i + ": " + hotbar[i]);
             else
-                Debug.Log("espacio " + i + ": vaciodo");
+                Debug.Log("espacio " + i + ": vacio");
         }
     }
 }

@@ -24,7 +24,7 @@ public class Enemigosowo : MonoBehaviour
 
         MostrarEnemigos();
 
-        Debug.Log("total de lo s enemigos: " + enemigos.Count);
+        Debug.Log("total de los enemigos: " + enemigos.Count);
     }
 
     void SpawneaEnemigo(string enemigo)
