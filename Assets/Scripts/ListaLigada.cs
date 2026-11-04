@@ -4,10 +4,10 @@ public class ListaLigada : MonoBehaviour
 {
     class Nodo
     {
-        public string dato;
+        public Transform dato;
         public Nodo siguiente;
 
-        public Nodo(string valor)
+        public Nodo(Transform valor)
         {
             dato = valor;
             siguiente = null;
@@ -16,58 +16,51 @@ public class ListaLigada : MonoBehaviour
 
     Nodo cabeza;
 
+    public Transform[] waypoints;
+
     void Start()
     {
-        Debug.Log(" lista ligada ");
+        Debug.Log("Lista ligada");
 
-        AddNodeToLinkedList("Inicio", 0);
-        AddNodeToLinkedList("bosque", 1);
-        AddNodeToLinkedList("ciudad", 2);
-        AddNodeToLinkedList("desierto", 3);
-        AddNodeToLinkedList("Destino", 4);
-
-        ShowLinkedList();
-
-        RemoveNodeFromLinkedList(2);
-
-        ShowLinkedList();
-
-        InvertLinkList();
-
-        ShowLinkedList();
-
-        ClearLinkList();
+       
+        for (int i = 0; i < waypoints.Length; i++)
+        {
+            AddNodeToLinkedList(waypoints[i], i);
+        }
 
         ShowLinkedList();
     }
 
-    void ShowLinkedList()
+    public void ShowLinkedList()
     {
-        Debug.Log(" mostrar lista");
+        Debug.Log("Mostrar lista");
 
         Nodo actual = cabeza;
 
         if (actual == null)
         {
-            Debug.Log("la lista esta vacia");
+            Debug.Log("La lista esta vacia");
             return;
         }
 
         while (actual != null)
         {
-            Debug.Log(actual.dato);
+            Debug.Log(actual.dato.name);
             actual = actual.siguiente;
         }
     }
 
-    void ClearLinkList()
+    public void ClearLinkList()
     {
         cabeza = null;
         Debug.Log("Lista limpiada");
     }
 
-    void AddNodeToLinkedList(string valor, int posicion)
+    public void AddNodeToLinkedList(Transform valor, int posicion)
     {
+        if (valor == null)
+            return;
+
         Nodo nuevo = new Nodo(valor);
 
         if (posicion <= 0 || cabeza == null)
@@ -91,14 +84,14 @@ public class ListaLigada : MonoBehaviour
             actual.siguiente = nuevo;
         }
 
-        Debug.Log("Nodo agregado: " + valor);
+        Debug.Log("Nodo agregado: " + valor.name);
     }
 
-    void RemoveNodeFromLinkedList(int posicion)
+    public void RemoveNodeFromLinkedList(int posicion)
     {
         if (cabeza == null || posicion < 0)
         {
-            Debug.Log("no se puede eliminar el nodo");
+            Debug.Log("No se puede eliminar el nodo");
             return;
         }
 
@@ -122,23 +115,22 @@ public class ListaLigada : MonoBehaviour
         if (actual.siguiente != null)
         {
             actual.siguiente = actual.siguiente.siguiente;
-            Debug.Log("Nodo eliminado en posicion: " + posicion);
+            Debug.Log("Nodo eliminado: " + posicion);
         }
         else
         {
-            Debug.Log("posicion no encontrada");
+            Debug.Log("Posicion no encontrada");
         }
     }
 
-    void InvertLinkList()
+    public void InvertLinkList()
     {
         Nodo anterior = null;
         Nodo actual = cabeza;
-        Nodo siguiente = null;
 
         while (actual != null)
         {
-            siguiente = actual.siguiente;
+            Nodo siguiente = actual.siguiente;
             actual.siguiente = anterior;
             anterior = actual;
             actual = siguiente;
@@ -146,6 +138,39 @@ public class ListaLigada : MonoBehaviour
 
         cabeza = anterior;
 
-        Debug.Log("lista invertida");
+        Debug.Log("Lista invertida");
+        ShowLinkedList();
+    }
+
+    public Transform GetWaypoint(int posicion)
+    {
+        Nodo actual = cabeza;
+        int contador = 0;
+
+        while (actual != null)
+        {
+            if (contador == posicion)
+                return actual.dato;
+
+            actual = actual.siguiente;
+            contador++;
+        }
+
+        return null;
+    }
+
+    public int GetCount()
+    {
+        Nodo actual = cabeza;
+        int contador = 0;
+
+        while (actual != null)
+        {
+            contador++;
+            actual = actual.siguiente;
+        }
+
+        return contador;
     }
 }
+
