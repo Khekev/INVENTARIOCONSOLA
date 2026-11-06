@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,18 +22,31 @@ public class Agente : MonoBehaviour
 
     void Update()
     {
-        
-        if (Keyboard.current != null &&
-            Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current == null)
+            return;
+
+       
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             IniciarMovimiento();
         }
 
         
-        if (Keyboard.current != null &&
-            Keyboard.current.rKey.wasPressedThisFrame)
+        if (Keyboard.current.sKey.wasPressedThisFrame)
         {
             CambiarRuta();
+        }
+
+       
+        if (Keyboard.current.aKey.wasPressedThisFrame)
+        {
+            lista.AgregarNodo();
+        }
+
+        
+        if (Keyboard.current.dKey.wasPressedThisFrame)
+        {
+            lista.EliminarNodo();
         }
     }
 
@@ -44,7 +58,6 @@ public class Agente : MonoBehaviour
         if (lista == null || lista.GetCount() == 0)
         {
             movimiento = false;
-            Debug.Log("No hay waypoints");
             return;
         }
 
@@ -54,17 +67,20 @@ public class Agente : MonoBehaviour
             return;
 
         Vector2 posicion = transform.position;
-        Vector2 diferencia = (Vector2)objetivo.position - posicion;
-        float distancia = diferencia.magnitude;
+        Vector2 destino = objetivo.position;
+
+        float distancia = Vector2.Distance(posicion, destino);
 
         if (distancia <= distanciaLlegada)
         {
+            transform.position = destino;
+
             Debug.Log("Punto alcanzado: " + objetivo.name);
 
             if (puntoActual >= lista.GetCount() - 1)
             {
                 movimiento = false;
-                Debug.Log("Agente detenido: ultimo nodo alcanzado");
+                Debug.Log("¡ULTIMO NODO ALCANZADO!");
             }
             else
             {
@@ -74,19 +90,20 @@ public class Agente : MonoBehaviour
             return;
         }
 
-        Vector2 direccion = diferencia.normalized;
+        Vector2 direccion = (destino - posicion).normalized;
 
-     
+        
         float velocidadActual = velocidad;
 
         if (distancia < distanciaFrenado)
         {
-            velocidadActual *= Mathf.Clamp01(
-                distancia / distanciaFrenado
+            velocidadActual = Mathf.Max(
+                velocidad * 0.3f,
+                velocidad * (distancia / distanciaFrenado)
             );
         }
 
-
+        
         RaycastHit2D obstaculo = Physics2D.CircleCast(
             posicion,
             radioDeteccion,
@@ -97,23 +114,45 @@ public class Agente : MonoBehaviour
 
         Vector2 direccionMovimiento = direccion;
 
- 
+      
         if (obstaculo.collider != null)
         {
-            Vector2 lateral = new Vector2(
-                -obstaculo.normal.y,
-                obstaculo.normal.x
+            Debug.Log("¡OBSTACULO DETECTADO!");
+
+            Vector2 derecha = new Vector2(
+                -direccion.y,
+                direccion.x
             );
 
-            if (Vector2.Dot(lateral, direccion) < 0)
-            {
-                lateral = -lateral;
-            }
+            Vector2 izquierda = -derecha;
 
-            direccionMovimiento = lateral;
+            bool derechaLibre = !Physics2D.CircleCast(
+                posicion,
+                radioDeteccion,
+                derecha,
+                distanciaDeteccion,
+                capaObstaculos
+            );
+
+            bool izquierdaLibre = !Physics2D.CircleCast(
+                posicion,
+                radioDeteccion,
+                izquierda,
+                distanciaDeteccion,
+                capaObstaculos
+            );
+
+            if (derechaLibre)
+                direccionMovimiento = derecha;
+            else if (izquierdaLibre)
+                direccionMovimiento = izquierda;
+            else
+            {
+                Debug.Log("No hay espacio para rodear el obstaculo");
+                return;
+            }
         }
 
-   
         transform.position = posicion +
             direccionMovimiento * velocidadActual * Time.fixedDeltaTime;
     }

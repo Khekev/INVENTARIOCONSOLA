@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ListaLigada : MonoBehaviour
 {
@@ -18,11 +19,14 @@ public class ListaLigada : MonoBehaviour
 
     public Transform[] waypoints;
 
+    
+    public GameObject prefabNodo;
+    private List<Transform> nodosCreados = new List<Transform>();
+
     void Start()
     {
         Debug.Log("Lista ligada");
 
-       
         for (int i = 0; i < waypoints.Length; i++)
         {
             AddNodeToLinkedList(waypoints[i], i);
@@ -171,6 +175,63 @@ public class ListaLigada : MonoBehaviour
         }
 
         return contador;
+    }
+
+    
+    public void AgregarNodo()
+    {
+        if (prefabNodo == null)
+        {
+            Debug.Log("Falta asignar el Prefab");
+            return;
+        }
+
+        Vector3 posicion = new Vector3(
+            Random.Range(-3f, 3f),
+            Random.Range(-2f, 2f),
+            0
+        );
+
+        GameObject nuevoObjeto = Instantiate(
+            prefabNodo,
+            posicion,
+            Quaternion.identity
+        );
+
+        nuevoObjeto.name = "NodoNuevo";
+
+        int posicionLista = GetCount() - 1;
+
+        AddNodeToLinkedList(
+            nuevoObjeto.transform,
+            posicionLista
+        );
+
+        nodosCreados.Add(nuevoObjeto.transform);
+
+        Debug.Log("Nuevo cuadrado creado");
+    }
+
+    
+    public void EliminarNodo()
+    {
+        if (nodosCreados.Count == 0)
+        {
+            Debug.Log("No hay cuadrados nuevos para eliminar");
+            return;
+        }
+
+        Transform ultimo = nodosCreados[nodosCreados.Count - 1];
+
+        int posicion = GetCount() - 2;
+
+        RemoveNodeFromLinkedList(posicion);
+
+        Destroy(ultimo.gameObject);
+
+        nodosCreados.RemoveAt(nodosCreados.Count - 1);
+
+        Debug.Log("Cuadrado eliminado");
     }
 }
 
