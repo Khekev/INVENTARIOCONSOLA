@@ -296,6 +296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ListaLigada
   waypoints: []
+  prefabNodo: {fileID: 0}
 --- !u!114 &345992582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1027,6 +1028,7 @@ MonoBehaviour:
   - {fileID: 1744543798}
   - {fileID: 964208636}
   - {fileID: 1022379043}
+  prefabNodo: {fileID: 2032569615}
 --- !u!1 &1325222237
 GameObject:
   m_ObjectHideFlags: 0
